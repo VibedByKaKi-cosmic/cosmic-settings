@@ -350,7 +350,7 @@ pub fn vision() -> section::Section<crate::pages::Message> {
                         .position(|mode| *mode == page.comp_config.night_light_mode);
 
                     let dropdown = cosmic::Element::from(dropdown::popup_dropdown(
-                        &mode_names,
+                        mode_names.as_slice(),
                         selected,
                         move |idx| {
                             Message::SetNightLightMode(modes.get(idx).copied().unwrap_or_default())

@@ -1,5 +1,5 @@
 Package: cosmic-settings
-Version: 1.11.0-1+git9ca6e48
+Version: 1.11.0-1+git4c1e5d4
 Architecture: amd64
 Maintainer: Michael Murphy <mmstick@pm.me>
 Installed-Size: 64749
@@ -8,11 +8,11 @@ Recommends: adw-gtk3
 Homepage: https://github.com/pop-os/cosmic-settings
 Priority: optional
 Section: utils
-Filename: pool/main/c/cosmic-settings/cosmic-settings_1.11.0-1+git9ca6e48_amd64.deb
-Size: 16660030
-SHA256: 7b54986e70475eeaa9498d474d7209ce0e22a9b4ca43f98d256b5332177f1362
-SHA1: f62294a64d4b5e231a230240ebc611ddf0a7b1d0
-MD5sum: 5b6e4b635ccad0ffd756542f41c7f03c
+Filename: pool/main/c/cosmic-settings/cosmic-settings_1.11.0-1+git4c1e5d4_amd64.deb
+Size: 16660024
+SHA256: d1dbb70f1cefee4691b3aeabd6d9faddff1f58f5a2e83f11ae9a0ad0c8bce753
+SHA1: dad72eccff5768c15c4da550b75fd14d07481a4b
+MD5sum: 1c94834c270968af081cb5deadad4829
 Description: Settings application for the COSMIC desktop environment
  Settings application for the COSMIC desktop environment
 

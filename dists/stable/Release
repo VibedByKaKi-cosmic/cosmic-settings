@@ -1,18 +1,18 @@
 Label: COSMIC Settings APT Repository
 Codename: stable
-Date: Sat, 14 Nov 2026 23:05:45 UTC
+Date: Sat, 14 Nov 2026 23:29:48 UTC
 Architectures: amd64
 Components: main
 Description: COSMIC Settings packages built from VibedByKaKi-cosmic/cosmic-settings
 MD5Sum:
- 41f520644f371d3912f1a2f5d494e282 945 main/binary-amd64/Packages
- f06e59dd763f99463f248ef89ac771f7 566 main/binary-amd64/Packages.gz
+ 00cb5079f6b3e643dc5e2accb7e77211 945 main/binary-amd64/Packages
+ 4e81ecfe277d194c56a024facf44b1d0 565 main/binary-amd64/Packages.gz
  f8b82eab801e930e5e85bf3d934a3d0b 158 main/binary-amd64/Release
 SHA1:
- 16d573d901f2ed27bcaa1d89b90faf46b9121dba 945 main/binary-amd64/Packages
- 1a5e0d015393b6f0a98db67aa11aa9ce312b3ad9 566 main/binary-amd64/Packages.gz
+ bc38cc1994ba8a094239dcc0de292b84e9f36413 945 main/binary-amd64/Packages
+ 2e73134d75d3ce62fee45d1a5fb27fb4d1c22908 565 main/binary-amd64/Packages.gz
  017d96b50114e00e019f8bda2328d4ba1dd5d0d0 158 main/binary-amd64/Release
 SHA256:
- 60903f42022656171b94a8fd58b2d2839438e205028eff8c0097d296d365f98b 945 main/binary-amd64/Packages
- 19ee238b40940fa0fc23e98b58ac5dd1f25aa34416e3f8be6114f10b8c3ae0e4 566 main/binary-amd64/Packages.gz
+ 6b97c20f182598410a90f65c0086b5311b046dba1e32f23c547ebfa0569fc116 945 main/binary-amd64/Packages
+ 3ca35ea0944171223a6bc50e80bce97de2936824a7001332e9e3009aa666ad86 565 main/binary-amd64/Packages.gz
  80d1cecb62b6d18d5978ca58d2ac0379f7f9eacbfd080653029a8c8c01795e04 158 main/binary-amd64/Release

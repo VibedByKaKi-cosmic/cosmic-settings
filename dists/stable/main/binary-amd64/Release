@@ -1,0 +1,4 @@
+Component: main
+Label: COSMIC Settings APT Repository
+Architecture: amd64
+Description: COSMIC Settings packages built from VibedByKaKi-cosmic/cosmic-settings

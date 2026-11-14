@@ -1,0 +1,5 @@
+Codename: stable
+Components: main
+Architectures: amd64
+Label: COSMIC Settings APT Repository
+Description: COSMIC Settings packages built from VibedByKaKi-cosmic/cosmic-settings

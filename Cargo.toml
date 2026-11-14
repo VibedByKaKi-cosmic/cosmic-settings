@@ -58,8 +58,11 @@ git = "https://github.com/pop-os/libcosmic"
 [workspace.dependencies.cosmic-bg-config]
 git = "https://github.com/pop-os/cosmic-bg"
 
+# TEMPORARY: uses the fork branch that adds the `night_light` field and setter.
+# Revert to `git = "https://github.com/pop-os/cosmic-comp"` once upstream merges it.
 [workspace.dependencies.cosmic-comp-config]
-git = "https://github.com/pop-os/cosmic-comp"
+git = "https://github.com/VibedByKaKi-cosmic/cosmic-comp"
+branch = "fix/issue-2059"
 features = ["output"]
 
 [workspace.dependencies.cosmic-idle-config]

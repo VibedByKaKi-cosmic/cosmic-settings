@@ -496,7 +496,7 @@ impl Page {
                     .comp_config
                     .set_night_light(&self.comp_helper, enabled)
                 {
-                    Ok(()) => self.comp_config.night_light = enabled,
+                    Ok(_) => self.comp_config.night_light = enabled,
                     Err(err) => tracing::error!(?err, "failed to set night_light"),
                 }
             }

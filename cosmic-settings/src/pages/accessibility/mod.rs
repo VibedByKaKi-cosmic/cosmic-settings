@@ -93,6 +93,7 @@ pub enum Message {
     Return,
     ScreenReaderEnabled(bool),
     SetCursorShakeToFind(bool),
+    SetNightLight(bool),
     SetScreenFilterActive(bool),
     SetScreenFilterSelection(ColorFilter),
     SetScreenInverted(bool),
@@ -209,6 +210,8 @@ pub fn vision() -> section::Section<crate::pages::Message> {
         color_filter_type = fl!("color-filter");
         shake_cursor = fl!("accessibility", "shake-cursor");
         shake_cursor_desc = fl!("accessibility", "shake-cursor-desc");
+        night_light = fl!("accessibility", "night-light");
+        night_light_desc = fl!("accessibility", "night-light-desc");
     });
 
     Section::default()
@@ -298,6 +301,13 @@ pub fn vision() -> section::Section<crate::pages::Message> {
 
                     settings::item::builder(&descriptions[color_filter_type]).control(dropdown)
                 })
+                .add(
+                    settings::item::builder(&descriptions[night_light])
+                        .description(&descriptions[night_light_desc])
+                        .toggler(page.comp_config.night_light, |enabled| {
+                            Message::SetNightLight(enabled).into()
+                        }),
+                )
                 .add(
                     settings::item::builder(&descriptions[shake_cursor])
                         .description(&descriptions[shake_cursor_desc])
@@ -479,6 +489,15 @@ impl Page {
                     .set_cursor_shake_to_find(&self.comp_helper, enabled)
                 {
                     tracing::error!(?err, "failed to set cursor_shake_to_find");
+                }
+            }
+            Message::SetNightLight(enabled) => {
+                match self
+                    .comp_config
+                    .set_night_light(&self.comp_helper, enabled)
+                {
+                    Ok(()) => self.comp_config.night_light = enabled,
+                    Err(err) => tracing::error!(?err, "failed to set night_light"),
                 }
             }
             Message::SetSoundMono(active) => {

@@ -285,6 +285,8 @@ accessibility = Accessibility
     .color-filters = Color filters
     .shake-cursor = Shake pointer to find it
     .shake-cursor-desc = Quickly shake the mouse to temporarily enlarge the pointer
+    .night-light = Night light
+    .night-light-desc = Warm the screen colors to reduce eye strain
 
 hearing = Hearing
     .mono = Play stereo audio as mono

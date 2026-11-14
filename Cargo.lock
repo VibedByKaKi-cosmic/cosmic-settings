@@ -1460,7 +1460,7 @@ dependencies = [
 [[package]]
 name = "cosmic-comp-config"
 version = "1.0.0"
-source = "git+https://github.com/VibedByKaKi-cosmic/cosmic-comp?branch=fix/issue-2059#ac94c1e99e92cbd8922a251b3944b1bece3b0524"
+source = "git+https://github.com/VibedByKaKi-cosmic/cosmic-comp?branch=fix/issue-2059#9c15a16d7a474ea20ded0e53c4e16b9417bdcfb9"
 dependencies = [
  "cosmic-config",
  "input",

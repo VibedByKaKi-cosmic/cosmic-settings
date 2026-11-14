@@ -287,6 +287,12 @@ accessibility = Accessibility
     .shake-cursor-desc = Quickly shake the mouse to temporarily enlarge the pointer
     .night-light = Night light
     .night-light-desc = Warm the screen colors to reduce eye strain
+    .night-light-off = Off
+    .night-light-always = Always on
+    .night-light-scheduled = Scheduled
+    .night-light-temperature = Color temperature
+    .night-light-start = Start time
+    .night-light-end = End time
 
 hearing = Hearing
     .mono = Play stereo audio as mono

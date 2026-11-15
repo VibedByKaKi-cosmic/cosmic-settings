@@ -44,6 +44,8 @@ pub struct Page {
     /// Text of the night light start and end time inputs, edited before submit.
     night_light_start_text: String,
     night_light_end_text: String,
+    /// Option names of the night light mode dropdown, in `NightLightMode` order
+    night_light_mode_names: Vec<String>,
 }
 
 /// Bounds of the night light color temperature, in Kelvin.
@@ -98,6 +100,11 @@ impl Default for Page {
                 .unwrap_or_default(),
             daemon_helper,
             reader_enabled: false,
+            night_light_mode_names: vec![
+                fl!("accessibility", "night-light-off"),
+                fl!("accessibility", "night-light-always"),
+                fl!("accessibility", "night-light-scheduled"),
+            ],
             night_light_start_text: format_minutes(comp_config.night_light_start),
             night_light_end_text: format_minutes(comp_config.night_light_end),
             comp_config,
@@ -239,9 +246,6 @@ pub fn vision() -> section::Section<crate::pages::Message> {
         shake_cursor_desc = fl!("accessibility", "shake-cursor-desc");
         night_light = fl!("accessibility", "night-light");
         night_light_desc = fl!("accessibility", "night-light-desc");
-        night_light_off = fl!("accessibility", "night-light-off");
-        night_light_always = fl!("accessibility", "night-light-always");
-        night_light_scheduled = fl!("accessibility", "night-light-scheduled");
         night_light_temperature = fl!("accessibility", "night-light-temperature");
         night_light_start = fl!("accessibility", "night-light-start");
         night_light_end = fl!("accessibility", "night-light-end");
@@ -340,17 +344,12 @@ pub fn vision() -> section::Section<crate::pages::Message> {
                         NightLightMode::Always,
                         NightLightMode::Scheduled,
                     ];
-                    let mode_names = vec![
-                        descriptions[night_light_off].clone(),
-                        descriptions[night_light_always].clone(),
-                        descriptions[night_light_scheduled].clone(),
-                    ];
                     let selected = modes
                         .iter()
                         .position(|mode| *mode == page.comp_config.night_light_mode);
 
                     let dropdown = cosmic::Element::from(dropdown::popup_dropdown(
-                        mode_names.as_slice(),
+                        page.night_light_mode_names.as_slice(),
                         selected,
                         move |idx| {
                             Message::SetNightLightMode(modes.get(idx).copied().unwrap_or_default())

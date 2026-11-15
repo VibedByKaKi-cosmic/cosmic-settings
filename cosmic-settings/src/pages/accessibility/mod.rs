@@ -4,8 +4,8 @@ use cosmic::iced::stream;
 use cosmic::theme::CosmicTheme;
 use cosmic::widget::{dropdown, settings, text};
 use cosmic::{Apply, Element, Task, surface};
-use cosmic_comp_config::CosmicCompConfig;
 pub use cosmic_comp_config::ZoomMovement;
+use cosmic_comp_config::{CosmicCompConfig, NightLightMode};
 use cosmic_config::CosmicConfigEntry;
 use cosmic_settings_a11y_manager_subscription as cosmic_a11y_manager;
 use cosmic_settings_accessibility_subscription as a11y_bus;
@@ -41,6 +41,28 @@ pub struct Page {
     reader_enabled: bool,
     comp_config: CosmicCompConfig,
     comp_helper: cosmic_config::Config,
+    /// Text of the night light start and end time inputs, edited before submit.
+    night_light_start_text: String,
+    night_light_end_text: String,
+    /// Option names of the night light mode dropdown, in `NightLightMode` order
+    night_light_mode_names: Vec<String>,
+}
+
+/// Bounds of the night light color temperature, in Kelvin.
+const NIGHT_LIGHT_KELVIN_MIN: u32 = 1000;
+const NIGHT_LIGHT_KELVIN_MAX: u32 = 6500;
+
+/// Formats minutes since midnight as `HH:MM`.
+fn format_minutes(minutes: u32) -> String {
+    format!("{:02}:{:02}", minutes / 60, minutes % 60)
+}
+
+/// Parses `HH:MM` into minutes since midnight.
+fn parse_minutes(text: &str) -> Option<u32> {
+    let (hours, minutes) = text.trim().split_once(':')?;
+    let hours: u32 = hours.trim().parse().ok()?;
+    let minutes: u32 = minutes.trim().parse().ok()?;
+    (hours < 24 && minutes < 60).then_some(hours * 60 + minutes)
 }
 
 impl Default for Page {
@@ -78,6 +100,13 @@ impl Default for Page {
                 .unwrap_or_default(),
             daemon_helper,
             reader_enabled: false,
+            night_light_mode_names: vec![
+                fl!("accessibility", "night-light-off"),
+                fl!("accessibility", "night-light-always"),
+                fl!("accessibility", "night-light-scheduled"),
+            ],
+            night_light_start_text: format_minutes(comp_config.night_light_start),
+            night_light_end_text: format_minutes(comp_config.night_light_end),
             comp_config,
             comp_helper,
         }
@@ -93,6 +122,12 @@ pub enum Message {
     Return,
     ScreenReaderEnabled(bool),
     SetCursorShakeToFind(bool),
+    NightLightEndInput(String),
+    NightLightEndSubmit,
+    NightLightStartInput(String),
+    NightLightStartSubmit,
+    SetNightLightMode(NightLightMode),
+    SetNightLightTemperature(u32),
     SetScreenFilterActive(bool),
     SetScreenFilterSelection(ColorFilter),
     SetScreenInverted(bool),
@@ -209,6 +244,11 @@ pub fn vision() -> section::Section<crate::pages::Message> {
         color_filter_type = fl!("color-filter");
         shake_cursor = fl!("accessibility", "shake-cursor");
         shake_cursor_desc = fl!("accessibility", "shake-cursor-desc");
+        night_light = fl!("accessibility", "night-light");
+        night_light_desc = fl!("accessibility", "night-light-desc");
+        night_light_temperature = fl!("accessibility", "night-light-temperature");
+        night_light_start = fl!("accessibility", "night-light-start");
+        night_light_end = fl!("accessibility", "night-light-end");
     });
 
     Section::default()
@@ -298,6 +338,84 @@ pub fn vision() -> section::Section<crate::pages::Message> {
 
                     settings::item::builder(&descriptions[color_filter_type]).control(dropdown)
                 })
+                .add({
+                    let modes = [
+                        NightLightMode::Off,
+                        NightLightMode::Always,
+                        NightLightMode::Scheduled,
+                    ];
+                    let selected = modes
+                        .iter()
+                        .position(|mode| *mode == page.comp_config.night_light_mode);
+
+                    let dropdown = cosmic::Element::from(dropdown::popup_dropdown(
+                        page.night_light_mode_names.as_slice(),
+                        selected,
+                        move |idx| {
+                            Message::SetNightLightMode(modes.get(idx).copied().unwrap_or_default())
+                        },
+                        cosmic::iced::window::Id::RESERVED,
+                        Message::Surface,
+                        |a| {
+                            crate::app::Message::PageMessage(crate::pages::Message::Accessibility(
+                                a,
+                            ))
+                        },
+                    ))
+                    .map(crate::pages::Message::Accessibility);
+
+                    settings::item::builder(&descriptions[night_light])
+                        .description(&descriptions[night_light_desc])
+                        .control(dropdown)
+                })
+                .add(
+                    settings::item::builder(&descriptions[night_light_temperature]).control(
+                        cosmic::Element::from(
+                            cosmic::widget::slider(
+                                NIGHT_LIGHT_KELVIN_MIN..=NIGHT_LIGHT_KELVIN_MAX,
+                                page.comp_config.night_light_temperature,
+                                Message::SetNightLightTemperature,
+                            )
+                            .step(50_u32)
+                            .width(cosmic::iced::Length::Fill)
+                            .apply(cosmic::widget::container)
+                            .max_width(250),
+                        )
+                        .map(crate::pages::Message::Accessibility),
+                    ),
+                )
+                .add_maybe(
+                    (page.comp_config.night_light_mode == NightLightMode::Scheduled).then(|| {
+                        settings::item::builder(&descriptions[night_light_start]).control(
+                            cosmic::Element::from(
+                                cosmic::widget::text_input(
+                                    "HH:MM",
+                                    page.night_light_start_text.as_str(),
+                                )
+                                .on_input(Message::NightLightStartInput)
+                                .on_submit(|_| Message::NightLightStartSubmit)
+                                .width(cosmic::iced::Length::Fixed(80.0)),
+                            )
+                            .map(crate::pages::Message::Accessibility),
+                        )
+                    }),
+                )
+                .add_maybe(
+                    (page.comp_config.night_light_mode == NightLightMode::Scheduled).then(|| {
+                        settings::item::builder(&descriptions[night_light_end]).control(
+                            cosmic::Element::from(
+                                cosmic::widget::text_input(
+                                    "HH:MM",
+                                    page.night_light_end_text.as_str(),
+                                )
+                                .on_input(Message::NightLightEndInput)
+                                .on_submit(|_| Message::NightLightEndSubmit)
+                                .width(cosmic::iced::Length::Fixed(80.0)),
+                            )
+                            .map(crate::pages::Message::Accessibility),
+                        )
+                    }),
+                )
                 .add(
                     settings::item::builder(&descriptions[shake_cursor])
                         .description(&descriptions[shake_cursor_desc])
@@ -481,6 +599,58 @@ impl Page {
                     tracing::error!(?err, "failed to set cursor_shake_to_find");
                 }
             }
+            Message::SetNightLightMode(mode) => {
+                match self
+                    .comp_config
+                    .set_night_light_mode(&self.comp_helper, mode)
+                {
+                    Ok(_) => self.comp_config.night_light_mode = mode,
+                    Err(err) => tracing::error!(?err, "failed to set night_light_mode"),
+                }
+            }
+            Message::SetNightLightTemperature(kelvin) => {
+                match self
+                    .comp_config
+                    .set_night_light_temperature(&self.comp_helper, kelvin)
+                {
+                    Ok(_) => self.comp_config.night_light_temperature = kelvin,
+                    Err(err) => tracing::error!(?err, "failed to set night_light_temperature"),
+                }
+            }
+            Message::NightLightStartInput(text) => self.night_light_start_text = text,
+            Message::NightLightStartSubmit => match parse_minutes(&self.night_light_start_text) {
+                Some(minutes) => {
+                    match self
+                        .comp_config
+                        .set_night_light_start(&self.comp_helper, minutes)
+                    {
+                        Ok(_) => self.comp_config.night_light_start = minutes,
+                        Err(err) => tracing::error!(?err, "failed to set night_light_start"),
+                    }
+                    self.night_light_start_text =
+                        format_minutes(self.comp_config.night_light_start);
+                }
+                None => {
+                    self.night_light_start_text =
+                        format_minutes(self.comp_config.night_light_start);
+                }
+            },
+            Message::NightLightEndInput(text) => self.night_light_end_text = text,
+            Message::NightLightEndSubmit => match parse_minutes(&self.night_light_end_text) {
+                Some(minutes) => {
+                    match self
+                        .comp_config
+                        .set_night_light_end(&self.comp_helper, minutes)
+                    {
+                        Ok(_) => self.comp_config.night_light_end = minutes,
+                        Err(err) => tracing::error!(?err, "failed to set night_light_end"),
+                    }
+                    self.night_light_end_text = format_minutes(self.comp_config.night_light_end);
+                }
+                None => {
+                    self.night_light_end_text = format_minutes(self.comp_config.night_light_end);
+                }
+            },
             Message::SetSoundMono(active) => {
                 if let Err(err) = self
                     .daemon_config
